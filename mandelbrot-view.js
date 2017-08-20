@@ -2,6 +2,7 @@ const ZOOM_INCREMENT = 2;
 
 class Viewer {
 	constructor(bitmap, zoom, left, top) {
+		this.mandelbrot = new MandelbrotSet();
 		this.bitmap = bitmap;
 		this.zoom = zoom;
 		this.corner = new Complex(left, top);
@@ -17,6 +18,14 @@ class Viewer {
 
 	get height() {
 		return this.bitmap.height;
+	}
+
+	get iterations() {
+		return this.mandelbrot.iterations;
+	}
+
+	set iterations(iter) {
+		this.mandelbrot.iterations = iter;
 	}
 
 	zoomInOn(x, y) {
@@ -48,7 +57,7 @@ class Viewer {
 
 	renderPixel(pixel) {
 		const complex = this.toComplex(pixel);
-		const color = (isMandelbrot(complex) 
+		const color = (this.mandelbrot.contains(complex)
 			? this.color.white 
 			: this.color.black);
 		this.bitmap.setPixel(pixel, color);
@@ -65,9 +74,15 @@ class Viewer {
 function main() {
 	const canvas = document.querySelector('body canvas');
 	const bitmap = new Bitmap(canvas);
-	const viewer = new Viewer(bitmap, 100, -3, 3);
-	render(viewer);
+	const viewer = new Viewer(bitmap, 100, -4, 3);
 
+	addZoomListener(canvas, viewer);
+	addDetailListener(viewer);
+
+	render(viewer);
+}
+
+function addZoomListener(canvas, viewer) {
 	canvas.addEventListener('wheel', event => {
 		setStatus('rendering...');
 		if (event.deltaY > 0) {
@@ -75,6 +90,16 @@ function main() {
 		} else {
 			viewer.zoomInOn(event.offsetX, event.offsetY);
 		}
+		render(viewer);
+	});
+}
+
+function addDetailListener(viewer) {
+	const iterInput = document.querySelector('input[name="iterations"]');
+	iterInput.value = viewer.iterations;
+	iterInput.addEventListener('blur', event => {
+		const newIter = parseInt(iterInput.value);
+		viewer.iterations = newIter;
 		render(viewer);
 	});
 }
