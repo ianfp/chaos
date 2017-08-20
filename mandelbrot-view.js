@@ -42,7 +42,8 @@ class Viewer {
 		}
 		this.bitmap.redraw();
 		const end = (new Date()).getTime();
-		console.log('render time', end - start);
+		const renderTime = end - start;
+		return renderTime;
 	}
 
 	renderPixel(pixel) {
@@ -64,17 +65,28 @@ class Viewer {
 function main() {
 	const canvas = document.querySelector('body canvas');
 	const bitmap = new Bitmap(canvas);
-	const viewer = new Viewer(bitmap, 100, -5, 5);
-	viewer.render();
+	const viewer = new Viewer(bitmap, 100, -3, 3);
+	render(viewer);
 
 	canvas.addEventListener('wheel', event => {
+		setStatus('rendering...');
 		if (event.deltaY > 0) {
 			viewer.zoomOutOn(event.offsetX, event.offsetY);
 		} else {
 			viewer.zoomInOn(event.offsetX, event.offsetY);
 		}
-		viewer.render();
+		render(viewer);
 	});
+}
+
+function render(viewer) {
+	const renderTime = viewer.render();
+	const zoom = viewer.zoom.toFixed();
+	setStatus(`Rendered at ${zoom}x in ${renderTime} ms.`);
+}
+
+function setStatus(status) {
+	document.getElementById('status').innerHTML = status;
 }
 
 window.onload = main;
