@@ -34,12 +34,15 @@ class Viewer {
 	}
 
 	render() {
+		const start = (new Date()).getTime();
 		for (let x = 0; x < this.width; x++) {
 			for (let y = 0; y < this.height; y++) {
 				this.renderPixel(new Pixel(x, y));
 			}
 		}
 		this.bitmap.redraw();
+		const end = (new Date()).getTime();
+		console.log('render time', end - start);
 	}
 
 	renderPixel(pixel) {
