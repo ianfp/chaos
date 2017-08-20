@@ -56,4 +56,9 @@ describe("Complex", function() {
         expect(ouch.mul(argh)).toRenderAs("9.5 - i"); 
     });
 
+    it("can be scaled as a vector", function () {
+        const c = new Complex(30, 20);
+        expect(c.div(10)).toRenderAs("3 + 2i");
+    });
+
 });
