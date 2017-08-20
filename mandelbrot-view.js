@@ -1,4 +1,4 @@
-const ZOOM_INCREMENT = 1.1;
+const ZOOM_INCREMENT = 1.2;
 
 class Viewer {
 	constructor(bitmap, zoom, left, top) {
