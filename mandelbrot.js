@@ -1,5 +1,5 @@
 function isMandelbrot(complex) {
-	const maxIter = 10;
+	const maxIter = 100;
 	let current = Complex.ZERO;
 	for (let iter = 0; iter < maxIter; iter++) {
 		current = current.mul(current).add(complex);
