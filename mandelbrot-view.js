@@ -4,8 +4,7 @@ class Viewer {
 	constructor(bitmap, zoom, left, top) {
 		this.bitmap = bitmap;
 		this.zoom = zoom;
-		this.left = left;
-		this.top = top;
+		this.corner = new Complex(left, top);
 		this.color = {
 			white: new Color(255, 255, 255),
 			black: new Color(0, 0, 0),
@@ -20,11 +19,17 @@ class Viewer {
 		return this.bitmap.height;
 	}
 
-	incrementZoom() {
+	zoomInOn(x, y) {
+		let clicked = this.toComplex({x: x, y: y});
+		const diff = clicked.sub(this.corner).div(ZOOM_INCREMENT);
+		this.corner = clicked.sub(diff);
 		this.zoom *= ZOOM_INCREMENT;
 	}
 
-	decrementZoom() {
+	zoomOutOn(x, y) {
+		let clicked = this.toComplex({x: x, y: y});
+		const diff = clicked.sub(this.corner).mul(ZOOM_INCREMENT);
+		this.corner = clicked.sub(diff);
 		this.zoom /= ZOOM_INCREMENT;
 	}
 
@@ -46,9 +51,9 @@ class Viewer {
 	}
 
 	toComplex(pixel) {
-		const re = (pixel.x / this.zoom) + this.left;
-		const im = (pixel.y / this.zoom) - this.top;
-		return new Complex(re, im);
+		const re = (pixel.x / this.zoom) + this.corner.re;
+		const im = (pixel.y / this.zoom) - this.corner.im;
+		return new Complex(re, -im);
 	}
 }
 
@@ -60,11 +65,10 @@ function main() {
 	viewer.render();
 
 	canvas.addEventListener('wheel', event => {
-		console.log(event.offsetX, event.offsetY);
 		if (event.deltaY > 0) {
-			viewer.decrementZoom();
+			viewer.zoomOutOn(event.offsetX, event.offsetY);
 		} else {
-			viewer.incrementZoom();
+			viewer.zoomInOn(event.offsetX, event.offsetY);
 		}
 		viewer.render();
 	});
