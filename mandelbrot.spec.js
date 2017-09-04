@@ -1,11 +1,13 @@
 describe("Mandelbrot set", function() {
+    const mandelbrot = new MandelbrotSet(10);
+
     beforeEach(function () {
         jasmine.addMatchers({
             toBeInTheSet: function () {
                 return {
                     compare: function (complex) {
                         return {
-                            pass: isMandelbrot(complex),
+                            pass: mandelbrot.contains(complex),
                             message: `${complex.toString()} is not a Mandelbrot number`,
                         };
                     },
@@ -15,7 +17,7 @@ describe("Mandelbrot set", function() {
                 return {
                     compare: function (complex) {
                         return {
-                            pass: !isMandelbrot(complex),
+                            pass: !mandelbrot.contains(complex),
                             message: `${complex.toString()} is a Mandelbrot number`,
                         };
                     },
